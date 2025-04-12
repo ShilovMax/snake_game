@@ -2,12 +2,14 @@ import pygame as pg
 from dataclasses import dataclass
 import sys
 
+from utils.types import ColorType
+
 
 @dataclass
 class BaseGame:
     caption: str
     screen_size: tuple[int, int]
-    background_color: tuple[int, int, int]
+    background_color: ColorType
     fps: int
 
     def __post_init__(self) -> None:
