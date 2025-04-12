@@ -22,17 +22,25 @@ class BaseGame:
         while not self.is_win and not self.is_game_over:
             self._handle_events()
             self._update()
+            self._draw()
             pg.time.Clock().tick(self.fps)
 
     def _draw(self) -> None:
         self.screen.fill(self.background_color)
+        self._draw_objects()
         pg.display.flip()
+
+    def _draw_objects(self) -> None:
+        pass
 
     def _handle_events(self) -> None:
         for event in pg.event.get():
-            if event.type == pg.QUIT:
-                pg.quit()
-                sys.exit()
+            self._check_events(event=event)
+
+    def _check_events(self, event: pg.event.Event) -> None:
+        if event.type == pg.QUIT:
+            pg.quit()
+            sys.exit()
 
     def _update(self) -> None:
         pass
