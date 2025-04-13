@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from .base_q_learning_game import BaseQLearningGame
 from players import QLearningPlayer
-from state import QLearningState
+from utils.state import QLearningState
 
 
 @dataclass

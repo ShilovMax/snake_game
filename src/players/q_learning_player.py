@@ -3,8 +3,8 @@ from .abstract_q_learning_player import AbstractQLearningPlayer
 
 import numpy as np
 import random
-from action import Action
-from state import QLearningState
+from utils.action import Action
+from utils.state import QLearningState
 
 
 @dataclass

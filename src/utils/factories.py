@@ -3,13 +3,14 @@ from players import QLearningPlayer
 import config as cf
 from drawing_objects import Apple, Snake, Grid
 from game import HumanGame, QLearningGame
+from utils.types import ColorType
 
 
 class AbstractFactory[C](ABC):
     class_to_create: type[C]
 
     @classmethod
-    def create(cls, **kwargs):
+    def create(cls, **kwargs) -> C:
         kwargs = cls.set_defaults(kwargs)
         return cls.class_to_create(**kwargs)
 
@@ -28,8 +29,12 @@ class DrawingObjectFactory(AbstractFactory):
         return kwargs
 
     @classmethod
-    def get_param(cls, param: str):
-        return getattr(cf, f"DEFAULT_{cls.class_to_create.__name__.upper()}_{param}")
+    def get_param(cls, param: str) -> int | ColorType:
+        name = f"DEFAULT_{cls.class_to_create.__name__.upper()}_{param}"
+        attr = getattr(cf, name)
+        if attr is None:
+            raise AttributeError(f"Attribute {name} could not be None")
+        return attr
 
 
 class AppleFactory(DrawingObjectFactory):
@@ -59,8 +64,8 @@ class QLearningPlayerFactory(AbstractFactory):
 class BaseGameFactory(AbstractFactory):
     @classmethod
     def set_defaults(cls, kwargs: dict) -> dict:
-        kwargs.setdefault("width", cf.N_WIDTH)
-        kwargs.setdefault("height", cf.N_HEIGHT)
+        kwargs.setdefault("width", cf.N_WIDTH - 1)
+        kwargs.setdefault("height", cf.N_HEIGHT - 1)
         kwargs.setdefault("caption", cf.CAPTION)
         kwargs.setdefault("screen_size", cf.SCREEN_SIZE)
         kwargs.setdefault("background_color", cf.DEFAULT_BACKGROUND_COLOR)

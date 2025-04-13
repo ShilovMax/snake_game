@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from .game import Game
 import pygame as pg
-from action import Action
+from utils.action import Action
 
 
 @dataclass
