@@ -1,7 +1,7 @@
 import pygame as pg
 from dataclasses import dataclass
 import sys
-
+import time
 from utils.types import ColorType
 
 
@@ -18,14 +18,18 @@ class BaseGame:
 
         self.is_win: bool = False
         self.is_game_over: bool = False
+        self.is_pause: bool = False
 
-    def play(self) -> None:
+    def play(self, sleep: float = 0) -> None:
         self._draw()
         while not self.is_win and not self.is_game_over:
             self._handle_events()
-            self._update()
-            self._draw()
-            pg.time.Clock().tick(self.fps)
+            if not self.is_pause:
+                self._update()
+                self._draw()
+                pg.time.Clock().tick(self.fps)
+                if sleep:
+                    time.sleep(sleep)
 
     def _draw(self) -> None:
         self.screen.fill(self.background_color)
@@ -43,6 +47,9 @@ class BaseGame:
         if event.type == pg.QUIT:
             pg.quit()
             sys.exit()
+        elif event.type == pg.KEYDOWN:
+            if event.key == pg.K_p:
+                self.is_pause = not self.is_pause
 
     def _update(self) -> None:
         pass

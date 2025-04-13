@@ -9,10 +9,10 @@ import numpy as np
 class QLearningGame(BaseQLearningGame):
     player: QLearningPlayer
 
-    def learn(self, wins_count: int, file: str | None = None) -> None:
+    def learn(self, wins_count: int, file: str | None = None, sleep: float = 0) -> None:
         self.is_learning = True
         while self.score < wins_count:
-            self.play(endless=False)
+            self.play(endless=False, sleep=sleep)
         if file:
             np.save(file, self.player.q_table)
 

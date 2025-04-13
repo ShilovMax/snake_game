@@ -13,7 +13,6 @@ class QLearningPlayer(AbstractQLearningPlayer):
     file: str
 
     def __post_init__(self):
-        print(124, bool(self.file))
         if self.file:
             self.q_table = np.load(self.file)
         else:
@@ -48,8 +47,9 @@ class QLearningPlayer(AbstractQLearningPlayer):
         self._set_q(position=previous_position, value=self.learning_rate * q_delta)
 
     def _get_best_action(self, state: QLearningState) -> Action:
-        mx = int(np.argmax(self._get_q(position=state.coords)))
-        return Action(mx)
+        array: list[float] = [float(x) for x in self._get_q(position=state.coords)]
+        r = self._get_max(array=array)
+        return r
 
     def _get_q(self, position: tuple) -> np.ndarray:
         return self.q_table[position]
@@ -62,3 +62,14 @@ class QLearningPlayer(AbstractQLearningPlayer):
         Возвращает максимальную награду, которую можно получить на текущем шаге * гамма
         """
         return float(self.gamma * self._get_q(position=position))
+
+    def _get_max(self, array: list[float]) -> Action:
+        mx: float = max(array)
+        if array.count(mx) > 1:
+            indecies: list[int] = []
+            for num, el in enumerate(array):
+                if el == mx:
+                    indecies.append(num)
+            choice: int = random.choice(indecies)
+            return Action(choice)
+        return Action(array.index(mx))

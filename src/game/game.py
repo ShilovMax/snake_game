@@ -15,21 +15,19 @@ class Game[BP: BasePlayboard](BaseGame):
         self.action: Action = Action.stay
         self.score: int = 0
 
-    def play(self, endless: bool) -> None:
-        print("play")
-        super().play()
+    def play(self, endless: bool, sleep: float = 0) -> None:
+        super().play(sleep=sleep)
         if self.is_win:
-            self._on_win(endless=endless)
+            self._on_win(endless=endless, sleep=sleep)
         elif self.is_game_over:
             self._on_game_over()
-        print("after play")
 
-    def _on_win(self, endless: bool) -> None:
+    def _on_win(self, endless: bool, sleep: float) -> None:
         self.playboard.reset_apple()
         self.is_win = False
         self._update_score()
         if endless:
-            self.play(endless=endless)
+            self.play(endless=endless, sleep=sleep)
 
     def _update_score(self):
         self.score += 1
