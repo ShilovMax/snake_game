@@ -10,9 +10,14 @@ from utils.state import QLearningState
 @dataclass
 class QLearningPlayer(AbstractQLearningPlayer):
     matrix_size: tuple[int, int, int]
+    file: str
 
     def __post_init__(self):
-        self.q_table: np.ndarray = np.zeros(self.matrix_size)
+        print(124, bool(self.file))
+        if self.file:
+            self.q_table = np.load(self.file)
+        else:
+            self.q_table: np.ndarray = np.zeros(self.matrix_size)
 
     def choose_action(self, state: QLearningState) -> Action:
         if random.uniform(0, 1) < self.epsilon:

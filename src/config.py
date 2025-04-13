@@ -1,3 +1,5 @@
+from pathlib import Path
+
 SCORE_FONT_SIZE = 36
 SCORE_TEXT_RECT_SIZE = (80, 30)
 SCORE_TEXT = "SCORE 0"
@@ -26,7 +28,10 @@ MATRIX_SIZE = (N_WIDTH, N_HEIGHT, 4)
 
 LEARNING_RATE = 0.1
 GAMMA = 0.9
-EPSILON = 0.2
+EPSILON = 0.3
+BASE_DIR = Path(__file__).resolve().parent.parent
+MODELS_DIR = BASE_DIR / "models"
+MATRIX_FILE = ""  # MODELS_DIR / "q_matrix.npy"
 
 DEFAULT_APPLE_X = N_WIDTH - 1
 DEFAULT_APPLE_Y = N_HEIGHT - 1

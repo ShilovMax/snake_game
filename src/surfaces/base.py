@@ -10,9 +10,7 @@ class BaseSurface:
     background_color: ColorType
 
     def __post_init__(self):
-        print(1, self)
         self.surface: pg.Surface = pg.Surface(size=self.size)
-        print(2, self.surface)
         self.drawing_objects: list[AbstractDrawingObject] = []
         self._set_drawing_objects()
 

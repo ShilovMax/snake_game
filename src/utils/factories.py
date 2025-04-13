@@ -59,6 +59,7 @@ class QLearningPlayerFactory(AbstractFactory):
         kwargs.setdefault("gamma", cf.GAMMA)
         kwargs.setdefault("epsilon", cf.EPSILON)
         kwargs.setdefault("matrix_size", cf.MATRIX_SIZE)
+        kwargs.setdefault("file", cf.MATRIX_FILE)
         return kwargs
 
 

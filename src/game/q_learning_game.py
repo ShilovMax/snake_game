@@ -2,11 +2,21 @@ from dataclasses import dataclass
 from .base_q_learning_game import BaseQLearningGame
 from players import QLearningPlayer
 from utils.state import QLearningState
+import numpy as np
 
 
 @dataclass
 class QLearningGame(BaseQLearningGame):
     player: QLearningPlayer
+
+    def learn(self, wins_count: int, file: str | None = None) -> None:
+        self.is_learning = True
+        while self.score < wins_count:
+            self.play(endless=False)
+        if file:
+            np.save(file, self.player.q_table)
+
+        self.is_learning = False
 
     def _get_state(self) -> QLearningState:
         return QLearningState(coords=self.playboard.snake.coords)
