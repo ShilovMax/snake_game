@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 from players import QLearningPlayer
 import config as cf
-from drawing_objects import Apple, Snake, Grid
+from drawing_objects import Apple, Snake, Grid, TextObject
 from game import HumanGame, QLearningGame
 from utils.types import ColorType
-from surfaces import BasePlayboard
+from surfaces import BasePlayboard, ScoreSurface
 
 
 class AbstractFactory[C](ABC):
@@ -67,13 +67,36 @@ class BasePlayboardFactory(AbstractFactory):
 
     @classmethod
     def set_defaults(cls, kwargs: dict) -> dict:
-        kwargs.setdefault("size", cf.SCREEN_SIZE)
+        kwargs.setdefault("size", cf.PLAYBOARD_SIZE)
         kwargs.setdefault("width", cf.N_WIDTH - 1)
         kwargs.setdefault("height", cf.N_HEIGHT - 1)
         kwargs.setdefault("background_color", cf.PLAYBOARD_BACKGROUND_COLOR)
         kwargs.setdefault("apple", AppleFactory.create())
         kwargs.setdefault("snake", SnakeFactory.create())
         kwargs.setdefault("grid", GridFactory.create())
+        return kwargs
+
+
+class ScoreFactory(AbstractFactory):
+    class_to_create = TextObject
+
+    @classmethod
+    def set_defaults(cls, kwargs: dict) -> dict:
+        kwargs.setdefault("font_size", cf.SCORE_FONT_SIZE)
+        kwargs.setdefault("rect_size", cf.SCORE_TEXT_RECT_SIZE)
+        kwargs.setdefault("_text", cf.SCORE_TEXT)
+        kwargs.setdefault("color", cf.SCORE_COLOR)
+        return kwargs
+
+
+class ScoreSurfaceFactory(AbstractFactory):
+    class_to_create = ScoreSurface
+
+    @classmethod
+    def set_defaults(cls, kwargs: dict) -> dict:
+        kwargs.setdefault("score", ScoreFactory.create())
+        kwargs.setdefault("size", cf.SCORE_SURFACE_SIZE)
+        kwargs.setdefault("background_color", cf.SCORE_BACKGROUND_COLOR)
         return kwargs
 
 
@@ -85,6 +108,7 @@ class BaseGameFactory(AbstractFactory):
         kwargs.setdefault("background_color", cf.BACKGROUND_COLOR)
         kwargs.setdefault("fps", cf.FPS)
         kwargs.setdefault("playboard", BasePlayboardFactory.create())
+        kwargs.setdefault("score_surface", ScoreSurfaceFactory.create())
         return kwargs
 
 

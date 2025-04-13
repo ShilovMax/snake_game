@@ -1,23 +1,18 @@
-import pygame as pg
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from config import CELL_SIZE
 from utils.types import ColorType
 
 
 @dataclass
-class DrawingObject:
-    x: int
-    y: int
+class AbstractDrawingObject(ABC):
     color: ColorType
 
-    def draw(self, surface: pg.Surface) -> None:
-        pg.draw.rect(
-            surface,
-            self.color,
-            (
-                self.x * CELL_SIZE,
-                self.y * CELL_SIZE,
-                CELL_SIZE,
-                CELL_SIZE,
-            ),
-        )
+    @abstractmethod
+    def draw(self, **kwargs) -> None:
+        pass
+
+
+@dataclass
+class AbstractXYObject(AbstractDrawingObject):
+    x: int
+    y: int

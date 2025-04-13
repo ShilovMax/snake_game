@@ -1,6 +1,8 @@
 from .rectangle import Rectangle
+from dataclasses import dataclass
 
 
+@dataclass
 class Snake(Rectangle):
     def move_left(self) -> None:
         self.x -= 1

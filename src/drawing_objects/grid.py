@@ -1,9 +1,9 @@
-from .drawing_object import DrawingObject
+from .drawing_object import AbstractXYObject
 import pygame as pg
 from config import CELL_SIZE
 
 
-class Grid(DrawingObject):
+class Grid(AbstractXYObject):
     def draw(self, surface: pg.Surface) -> None:
         self.draw_vertical_lines(surface=surface)
         self.draw_horizontal_lines(surface=surface)

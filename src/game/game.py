@@ -1,16 +1,19 @@
 from .base import BaseGame
 from dataclasses import dataclass
 from utils.types import Action
-from surfaces import BasePlayboard
+from surfaces import BasePlayboard, ScoreSurface
+import pygame as pg
 
 
 @dataclass
 class Game[BP: BasePlayboard](BaseGame):
     playboard: BP
+    score_surface: ScoreSurface
 
     def __post_init__(self) -> None:
         super().__post_init__()
         self.action: Action = Action.stay
+        self.score: int = 0
 
     def play(self) -> None:
         super().play()
@@ -22,13 +25,27 @@ class Game[BP: BasePlayboard](BaseGame):
     def _on_win(self) -> None:
         self.playboard.reset_apple()
         self.is_win = False
+        self._update_score()
+
         self.play()
+
+    def _update_score(self):
+        self.score += 1
+        self.score_surface.text = self.score_surface.text.split()[0] + f" {self.score}"
 
     def _on_game_over(self) -> None:
         pass
 
     def _draw_objects(self) -> None:
-        self.playboard.draw(surface=self.screen, coords=(0, 0))
+        self.score_surface.draw(
+            surface=self.screen, coords=(0, 0), rect=self._get_rect_for_score()
+        )
+        self.playboard.draw(surface=self.screen, coords=(0, self.score_surface.height))
+
+    def _get_rect_for_score(self) -> pg.Rect:
+        return self.score_surface.rect(
+            center=(self.screen_size[0] // 2, self.score_surface.height // 2)
+        )
 
     def _update(self) -> None:
         self._do_updates()
