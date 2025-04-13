@@ -9,7 +9,7 @@ class QLearningGame(BaseQLearningGame):
     player: QLearningPlayer
 
     def _get_state(self) -> QLearningState:
-        return QLearningState(coords=self.snake.coords)
+        return QLearningState(coords=self.playboard.snake.coords)
 
     def _get_reward(self, previous_state: QLearningState) -> int:
         if self._is_eat_apple():
@@ -22,14 +22,14 @@ class QLearningGame(BaseQLearningGame):
             return -2
 
     def _is_eat_apple(self) -> bool:
-        return self.snake.coords == self.apple.coords
+        return self.playboard.snake.coords == self.playboard.apple.coords
 
     def _is_x_distance_decreased(self, previous_state: QLearningState) -> bool:
-        return (self.apple.coords[0] - previous_state.coords[0]) > (
-            self.apple.coords[0] - self.snake.coords[0]
+        return (self.playboard.apple.x - previous_state.coords[0]) > (
+            self.playboard.apple.y - self.playboard.snake.coords[0]
         )
 
     def _is_y_distance_decreased(self, previous_state: QLearningState) -> bool:
-        return (self.apple.coords[1] - previous_state.coords[1]) > (
-            self.apple.coords[1] - self.snake.coords[1]
+        return (self.playboard.apple.y - previous_state.coords[1]) > (
+            self.playboard.apple.y - self.playboard.snake.coords[1]
         )

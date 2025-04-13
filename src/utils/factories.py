@@ -4,6 +4,7 @@ import config as cf
 from drawing_objects import Apple, Snake, Grid
 from game import HumanGame, QLearningGame
 from utils.types import ColorType
+from surfaces import BasePlayboard
 
 
 class AbstractFactory[C](ABC):
@@ -61,18 +62,29 @@ class QLearningPlayerFactory(AbstractFactory):
         return kwargs
 
 
-class BaseGameFactory(AbstractFactory):
+class BasePlayboardFactory(AbstractFactory):
+    class_to_create = BasePlayboard
+
     @classmethod
     def set_defaults(cls, kwargs: dict) -> dict:
+        kwargs.setdefault("size", cf.SCREEN_SIZE)
         kwargs.setdefault("width", cf.N_WIDTH - 1)
         kwargs.setdefault("height", cf.N_HEIGHT - 1)
-        kwargs.setdefault("caption", cf.CAPTION)
-        kwargs.setdefault("screen_size", cf.SCREEN_SIZE)
-        kwargs.setdefault("background_color", cf.DEFAULT_BACKGROUND_COLOR)
-        kwargs.setdefault("fps", cf.FPS)
+        kwargs.setdefault("background_color", cf.PLAYBOARD_BACKGROUND_COLOR)
         kwargs.setdefault("apple", AppleFactory.create())
         kwargs.setdefault("snake", SnakeFactory.create())
         kwargs.setdefault("grid", GridFactory.create())
+        return kwargs
+
+
+class BaseGameFactory(AbstractFactory):
+    @classmethod
+    def set_defaults(cls, kwargs: dict) -> dict:
+        kwargs.setdefault("caption", cf.CAPTION)
+        kwargs.setdefault("screen_size", cf.SCREEN_SIZE)
+        kwargs.setdefault("background_color", cf.BACKGROUND_COLOR)
+        kwargs.setdefault("fps", cf.FPS)
+        kwargs.setdefault("playboard", BasePlayboardFactory.create())
         return kwargs
 
 

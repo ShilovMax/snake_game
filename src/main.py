@@ -12,6 +12,6 @@ class GameType(Enum):
 
 pg.init()
 
-game: Game = GameType.human.value.create()
+game: Game = GameType.q_learning_game.value.create()
 
 game.play()

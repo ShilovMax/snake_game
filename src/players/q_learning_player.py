@@ -3,7 +3,7 @@ from .abstract_q_learning_player import AbstractQLearningPlayer
 
 import numpy as np
 import random
-from utils.action import Action
+from utils.types import Action
 from utils.state import QLearningState
 
 
