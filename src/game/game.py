@@ -23,11 +23,14 @@ class Game[BP: BasePlayboard](BaseGame):
             self._on_game_over()
 
     def _on_win(self, endless: bool, sleep: float) -> None:
-        self.playboard.reset_apple()
+        self._reset()
         self.is_win = False
         self._update_score()
         if endless:
             self.play(endless=endless, sleep=sleep)
+
+    def _reset(self) -> None:
+        self.playboard.reset_apple(is_random=True)
 
     def _update_score(self):
         self.score += 1

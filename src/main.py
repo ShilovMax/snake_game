@@ -14,8 +14,6 @@ pg.init()
 
 # game = GameType.human.value.create()
 game = GameType.q_learning_game.value.create()
-
 file = MODELS_DIR / "q_matrix.npy"
-game.learn(wins_count=3, file=file, sleep=0.5)
-# print(game.player.q_table)
-# game.play(endless=True)
+game.learn(wins_count=100, file=file, sleep=0.5)
+# game.play(endless=True, sleep=0.5)

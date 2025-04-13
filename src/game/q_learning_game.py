@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from .base_q_learning_game import BaseQLearningGame
 from players import QLearningPlayer
-from utils.state import QLearningState
+from utils.state import LinearQLearningState, QLearningState
 import numpy as np
 
 
@@ -19,7 +19,10 @@ class QLearningGame(BaseQLearningGame):
         self.is_learning = False
 
     def _get_state(self) -> QLearningState:
-        return QLearningState(coords=self.playboard.snake.coords)
+        return LinearQLearningState(
+            snake_coords=self.playboard.snake.coords,
+            apple_coords=self.playboard.apple.coords,
+        ).get_linear_coords(size=self.playboard.width)
 
     def _get_reward(self, previous_state: QLearningState) -> int:
         if self._is_eat_apple():
@@ -35,11 +38,14 @@ class QLearningGame(BaseQLearningGame):
         return self.playboard.snake.coords == self.playboard.apple.coords
 
     def _is_x_distance_decreased(self, previous_state: QLearningState) -> bool:
-        return (self.playboard.apple.x - previous_state.coords[0]) > (
-            self.playboard.apple.y - self.playboard.snake.coords[0]
+        return abs(self.playboard.apple.x - previous_state.coords[0]) > abs(
+            self.playboard.apple.x - self.playboard.snake.coords[0]
         )
 
     def _is_y_distance_decreased(self, previous_state: QLearningState) -> bool:
-        return (self.playboard.apple.y - previous_state.coords[1]) > (
+        return abs(self.playboard.apple.y - previous_state.coords[1]) > abs(
             self.playboard.apple.y - self.playboard.snake.coords[1]
         )
+
+    def _get_linear_index(self):
+        return

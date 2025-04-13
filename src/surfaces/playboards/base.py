@@ -18,10 +18,24 @@ class BasePlayboard(BaseSurface):
         self._all_coords: set[CoordsType] = {
             (x, y) for x in range(self.width + 1) for y in range(self.height + 1)
         }
+        self.apple_coords = self.apple.coords
+        self.snake_coords = self.snake.coords
 
-    def reset_apple(self) -> None:
-        possible_apple_coords: set[CoordsType] = self._all_coords - {self.snake.coords}
-        self.apple.coords = random.choice(list(possible_apple_coords))
+    def reset(self, is_random: bool) -> None:
+        self.reset_apple(is_random=is_random)
+        self.reset_snake()
+
+    def reset_apple(self, is_random: bool) -> None:
+        if is_random:
+            possible_apple_coords: set[CoordsType] = self._all_coords - {
+                self.snake.coords
+            }
+            self.apple.coords = random.choice(list(possible_apple_coords))
+        else:
+            self.apple.coords = self.apple_coords
+
+    def reset_snake(self) -> None:
+        self.snake.coords = self.snake_coords
 
     def do_updates(self, action: Action) -> None:
         if self._left_condition(action=action):

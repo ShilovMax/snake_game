@@ -15,6 +15,7 @@ class QLearningPlayer(AbstractQLearningPlayer):
     def __post_init__(self):
         if self.file:
             self.q_table = np.load(self.file)
+            self.epsilon = 0
         else:
             self.q_table: np.ndarray = np.zeros(self.matrix_size)
 
