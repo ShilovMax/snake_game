@@ -9,6 +9,9 @@ from utils.state import QLearningState
 
 @dataclass
 class QLearningPlayer(AbstractQLearningPlayer):
+    learning_rate: float
+    min_epsilon: float
+    epsilon_decay: float
     matrix_size: tuple[int, int, int]
     file: str
 
@@ -18,13 +21,6 @@ class QLearningPlayer(AbstractQLearningPlayer):
             self.epsilon = 0
         else:
             self.q_table: np.ndarray = np.zeros(self.matrix_size)
-
-    def choose_action(self, state: QLearningState) -> Action:
-        if random.uniform(0, 1) < self.epsilon:
-            int_action: int = random.randint(0, 3)
-            return Action(int_action)
-        action: Action = self._get_best_action(state=state)
-        return action
 
     def learn(
         self,
@@ -46,6 +42,7 @@ class QLearningPlayer(AbstractQLearningPlayer):
         q_delta: float = float(q_target - self._get_q(position=previous_position))
 
         self._set_q(position=previous_position, value=self.learning_rate * q_delta)
+        self._update_epsilon()
 
     def _get_best_action(self, state: QLearningState) -> Action:
         array: list[float] = [float(x) for x in self._get_q(position=state.coords)]
@@ -74,3 +71,7 @@ class QLearningPlayer(AbstractQLearningPlayer):
             choice: int = random.choice(indecies)
             return Action(choice)
         return Action(array.index(mx))
+
+    def _update_epsilon(self) -> None:
+        if self.epsilon > self.min_epsilon:
+            self.epsilon *= self.epsilon_decay

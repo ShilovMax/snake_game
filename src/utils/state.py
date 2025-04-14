@@ -1,4 +1,5 @@
-from dataclasses import dataclass
+from collections.abc import Iterator
+from dataclasses import asdict, dataclass
 
 from utils.types import CoordsType
 
@@ -26,5 +27,13 @@ class LinearQLearningState(BaseState):
             ),
         )
 
-    def snake(self) -> QLearningState:
-        return QLearningState(coords=self.snake_coords)
+
+@dataclass
+class LessOrGreaterState(BaseState):
+    is_head_x_less_than_apple_x: bool
+    is_head_x_greater_than_apple_x: bool
+    is_head_y_less_than_apple_y: bool
+    is_head_y_greater_than_apple_y: bool
+
+    def __iter__(self) -> Iterator[int]:
+        return iter([int(x) for x in asdict(self).values()])
