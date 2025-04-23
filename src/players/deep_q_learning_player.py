@@ -15,6 +15,22 @@ class DeepQLearningPlayer(AbstractQLearningPlayer):
     model: BaseNeuralNetwork
     optimizer: Optimizer
     loss_func: _Loss
+    _file: str
+
+    def __post_init__(self) -> None:
+        self.file = self._file
+
+    @property
+    def file(self) -> str:
+        return self._file
+
+    @file.setter
+    def file(self, val: str) -> None:
+        self._file = val
+        if self.file:
+            self.weights = torch.load(self.file, weights_only=True)
+            self.model.load_state_dict(self.weights)
+            self.epsilon = 0
 
     def _get_best_action(self, state: LessOrGreaterState) -> Action:
         q_values = self.model(torch.tensor([*state], dtype=torch.float32))

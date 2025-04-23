@@ -36,13 +36,12 @@ class BaseQLearningGame[S: BaseState, P: AbstractQLearningPlayer](Game):
         self.is_learning = False
 
     def _do_updates(self) -> None:
-        if not self.is_learning:
-            return super()._do_updates()
-
         previous_snake_state = QLearningState(coords=self.playboard.snake.coords)
         previous_state: S = self._get_state()
         self.action = self.player.choose_action(state=previous_state)
         super()._do_updates()
+        if not self.is_learning:
+            return
 
         self.player.learn(
             previous_state=previous_state,
@@ -72,7 +71,7 @@ class BaseQLearningGame[S: BaseState, P: AbstractQLearningPlayer](Game):
 
     @abstractmethod
     def _save(self, file: str) -> None:
-        raise NotADirectoryError
+        raise NotImplementedError
 
     @abstractmethod
     def _get_state(self) -> S:

@@ -44,7 +44,9 @@ MATRIX_SIZE = (
 BASE_DIR = Path(__file__).resolve().parent.parent
 MODELS_DIR = BASE_DIR / "models"
 MATRIX_FILE = ""  # MODELS_DIR / "q_matrix.npy"
-
+TORCH_FILE = ""
+# TORCH_FILE = MODELS_DIR / "model_v2.pth"
+# TORCH_FILE = MODELS_DIR / "model_v2_batch.pth"
 # DRAWING OBJECTS
 DEFAULT_APPLE_X = 0  # N_WIDTH - 1
 DEFAULT_APPLE_Y = 0  # N_HEIGHT - 1

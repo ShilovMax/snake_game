@@ -30,4 +30,5 @@ class DeepQLearningPlayerFactory(AbstractFactory):
         kwargs.setdefault("model", BaseNeuralNetworkFactory.create())
         kwargs.setdefault("optimizer", cf.OPTIMIZER(kwargs["model"].parameters()))
         kwargs.setdefault("loss_func", cf.LOSS_FUNC)
+        kwargs.setdefault("_file", cf.TORCH_FILE)
         return kwargs
