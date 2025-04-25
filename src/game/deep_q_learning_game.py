@@ -20,49 +20,31 @@ class DeepQLearningGame(BaseQLearningGame):
     def _save(self, file: str) -> None:
         torch.save(self.player.model.state_dict(), file)
 
-    @staticmethod
-    def get_all_possible_states(pow: int = 4) -> list[LessOrGreaterState]:
-        batches: list[LessOrGreaterState] = []
-        n: int = 2**pow
-
-        for i in range(n):
-            val: str = bin(i)[2:]
-            if len(val) < pow:
-                val = "0" * (pow - len(val)) + val
-
-            if (
-                (val[0] == val[1] == "1")
-                or (val[2] == val[3] == "1")
-                or (val[0] == val[1] == val[2] == val[3])
-            ):
-                continue
-
-            state = [bool(int(x)) for x in val]
-            batches.append(LessOrGreaterState(*state))
-
-        return batches
-
-    def learn_batches(
+    def _learn_till_high_probability_of_second_best_action(
         self,
-        wins_per_batch_count: int,
-        file: str | None = None,
+        probability: float,
         sleep: float = 0,
-    ) -> None:
-        self.is_learning = True
-        states: list[LessOrGreaterState] = self.get_all_possible_states()
+    ):
+        states: list[LessOrGreaterState] = LessOrGreaterState.get_all_possible_states()
+
+        while not all(
+            x > probability
+            for x in self.player.second_best_action_probability_per_state.values()
+        ):
+            for state in states:
+                self._set_playboard_by_state(state=state)
+                self.play(endless=False, sleep=sleep)
+
+    def _learn_batch(self, wins_per_batch_count: int, sleep: float = 0) -> None:
+        states: list[LessOrGreaterState] = LessOrGreaterState.get_all_possible_states()
 
         for _ in range(wins_per_batch_count):
             for state in states:
                 self._set_playboard_by_state(state=state)
                 self.play(endless=False, sleep=sleep)
 
-        if file:
-            self._save(file=file)
-
-        self.is_learning = False
-
-    def fake_batch_play(self, sleep: float = 0):
-        states: list[LessOrGreaterState] = self.get_all_possible_states()
+    def fake_batch_play(self, sleep: float = 0) -> None:
+        states: list[LessOrGreaterState] = LessOrGreaterState.get_all_possible_states()
         for state in states:
             self._set_playboard_by_state(state=state)
             self.play(endless=False, sleep=sleep)

@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from game import Game
 from players import AbstractQLearningPlayer
 from utils.state import BaseState, QLearningState
+from utils.types import LearnMode
 
 
 @dataclass
@@ -17,6 +18,11 @@ class BaseQLearningGame[S: BaseState, P: AbstractQLearningPlayer](Game):
             self._is_x_distance_decreased: 1,
             self._is_y_distance_decreased: 1,
         }
+        self.learn_funcs = {
+            LearnMode.till_wins_count: self._learn_till_wins_count,
+            LearnMode.batch: self._learn_batch,
+            LearnMode.till_high_probability_of_second_best_action: self._learn_till_high_probability_of_second_best_action,
+        }
 
     @property
     def snake_coords(self) -> tuple[int, int]:
@@ -26,14 +32,23 @@ class BaseQLearningGame[S: BaseState, P: AbstractQLearningPlayer](Game):
     def apple_coords(self) -> tuple[int, int]:
         return self.playboard.apple.coords
 
-    def learn(self, wins_count: int, file: str | None = None, sleep: float = 0) -> None:
+    def learn(self, mode: LearnMode, file: str | None = None, **kwargs) -> None:
         self.is_learning = True
-        while self.score < wins_count:
-            self.play(endless=False, sleep=sleep)
+        self.learn_funcs[mode](**kwargs)
         if file:
             self._save(file=file)
 
         self.is_learning = False
+
+    def _learn_till_wins_count(self, wins_count: int, sleep: float = 0) -> None:
+        while self.score < wins_count:
+            self.play(endless=False, sleep=sleep)
+
+    def _learn_batch(self, **kwargs) -> None:
+        pass
+
+    def _learn_till_high_probability_of_second_best_action(self, **kwargs) -> None:
+        pass
 
     def _do_updates(self) -> None:
         previous_snake_state = QLearningState(coords=self.playboard.snake.coords)

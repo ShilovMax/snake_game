@@ -21,11 +21,14 @@ class AbstractQLearningPlayer[S: BaseState](ABC):
         raise NotImplementedError
 
     def choose_action(self, state: S) -> Action:
+        if action := self._get_random_action():
+            return action
+        return self._get_best_action(state=state)
+
+    def _get_random_action(self) -> Action | None:
         if random.uniform(0, 1) < self.epsilon:
             int_action: int = random.randint(0, 3)
             return Action(int_action)
-        action: Action = self._get_best_action(state=state)
-        return action
 
     @abstractmethod
     def _get_best_action(self, state: S) -> Action:

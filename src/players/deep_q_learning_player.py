@@ -8,6 +8,7 @@ from torch.optim import Optimizer
 from torch.nn.modules.loss import _Loss
 from utils.types import Action
 from neural_networks import BaseNeuralNetwork
+import random
 
 
 @dataclass
@@ -19,6 +20,12 @@ class DeepQLearningPlayer(AbstractQLearningPlayer):
 
     def __post_init__(self) -> None:
         self.file = self._file
+        self.second_best_action_probability_per_state = {
+            str(x): 0.0
+            for x in filter(
+                lambda x: sum(x) == 2, LessOrGreaterState.get_all_possible_states()
+            )
+        }
 
     @property
     def file(self) -> str:
@@ -34,8 +41,23 @@ class DeepQLearningPlayer(AbstractQLearningPlayer):
 
     def _get_best_action(self, state: LessOrGreaterState) -> Action:
         q_values = self.model(torch.tensor([*state], dtype=torch.float32))
-        result = torch.argmax(q_values).item()
-        return Action(int(result))
+        vals: list[float] = [round(float(x), 4) for x in q_values]
+        result: int = self._get_max(state=state, array=vals)
+
+        return Action(result)
+
+    def _get_max(self, array: list[float], state: LessOrGreaterState) -> int:
+        max_index_1 = array.index(max(array))
+        if sum(state) == 2:
+            array_copy = array.copy()
+            array.pop(max_index_1)
+            max_value_2 = max(array)
+            max_index_2 = array_copy.index(max_value_2)
+            self.second_best_action_probability_per_state[str(state)] = max_value_2
+
+            return random.choice([max_index_1, max_index_2])
+
+        return max_index_1
 
     def learn(
         self,
