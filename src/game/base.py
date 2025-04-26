@@ -2,14 +2,14 @@ import pygame as pg
 from dataclasses import dataclass
 import sys
 import time
-from utils.types import ColorType
+from utils.types import DoubleInt, TripleInt
 
 
 @dataclass
 class BaseGame:
     caption: str
-    screen_size: tuple[int, int]
-    background_color: ColorType
+    screen_size: DoubleInt
+    background_color: TripleInt
     fps: int
 
     def __post_init__(self) -> None:

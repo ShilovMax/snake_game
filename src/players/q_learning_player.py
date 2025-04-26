@@ -3,7 +3,7 @@ from .abstract_q_learning_player import AbstractQLearningPlayer
 
 import numpy as np
 import random
-from utils.types import Action
+from utils.types import Action, TripleInt
 from utils.state import QLearningState
 
 
@@ -12,7 +12,7 @@ class QLearningPlayer(AbstractQLearningPlayer):
     learning_rate: float
     min_epsilon: float
     epsilon_decay: float
-    matrix_size: tuple[int, int, int]
+    matrix_size: TripleInt
     file: str
 
     def __post_init__(self):
@@ -34,9 +34,7 @@ class QLearningPlayer(AbstractQLearningPlayer):
             position=current_state.coords + (best_current_action.value,)
         )
 
-        previous_position: tuple[int, int, int] = previous_state.coords + (
-            action.value,
-        )
+        previous_position: TripleInt = previous_state.coords + (action.value,)
 
         q_target: float = reward + current_step_potential_reward
         q_delta: float = float(q_target - self._get_q(position=previous_position))
@@ -49,13 +47,13 @@ class QLearningPlayer(AbstractQLearningPlayer):
         r = self._get_max(array=array)
         return r
 
-    def _get_q(self, position: tuple) -> np.ndarray:
+    def _get_q(self, position: TripleInt) -> np.ndarray:
         return self.q_table[position]
 
-    def _set_q(self, position: tuple, value: float) -> None:
+    def _set_q(self, position: TripleInt, value: float) -> None:
         self.q_table[position] += value
 
-    def _get_current_step_potential_reward(self, position: tuple) -> float:
+    def _get_current_step_potential_reward(self, position: TripleInt) -> float:
         """
         Возвращает максимальную награду, которую можно получить на текущем шаге * гамма
         """

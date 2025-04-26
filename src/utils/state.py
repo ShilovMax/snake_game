@@ -1,7 +1,7 @@
 from collections.abc import Iterator
 from dataclasses import asdict, dataclass
 
-from utils.types import CoordsType
+from utils.types import DoubleInt
 
 
 @dataclass
@@ -11,13 +11,13 @@ class BaseState:
 
 @dataclass
 class QLearningState(BaseState):
-    coords: CoordsType
+    coords: DoubleInt
 
 
 @dataclass
 class LinearQLearningState(BaseState):
-    snake_coords: CoordsType
-    apple_coords: CoordsType
+    snake_coords: DoubleInt
+    apple_coords: DoubleInt
 
     def get_linear_coords(self, size: int) -> QLearningState:
         return QLearningState(

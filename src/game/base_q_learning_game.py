@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from game import Game
 from players import AbstractQLearningPlayer
 from utils.state import BaseState, QLearningState
-from utils.types import LearnMode
+from utils.types import DoubleInt, LearnMode
 
 
 @dataclass
@@ -25,11 +25,19 @@ class BaseQLearningGame[S: BaseState, P: AbstractQLearningPlayer](Game):
         }
 
     @property
-    def snake_coords(self) -> tuple[int, int]:
-        return self.playboard.snake.coords
+    def snake_head(self):
+        return self.playboard.snake.head
 
     @property
-    def apple_coords(self) -> tuple[int, int]:
+    def apple(self):
+        return self.playboard.apple
+
+    @property
+    def snake_head_coords(self) -> DoubleInt:
+        return self.playboard.snake.head.coords
+
+    @property
+    def apple_coords(self) -> DoubleInt:
         return self.playboard.apple.coords
 
     def learn(self, mode: LearnMode, file: str | None = None, **kwargs) -> None:
@@ -51,7 +59,7 @@ class BaseQLearningGame[S: BaseState, P: AbstractQLearningPlayer](Game):
         pass
 
     def _do_updates(self) -> None:
-        previous_snake_state = QLearningState(coords=self.playboard.snake.coords)
+        previous_snake_state = QLearningState(coords=self.playboard.snake.head.coords)
         previous_state: S = self._get_state()
         self.action = self.player.choose_action(state=previous_state)
         super()._do_updates()
@@ -72,16 +80,16 @@ class BaseQLearningGame[S: BaseState, P: AbstractQLearningPlayer](Game):
         return -2
 
     def _is_eat_apple(self, **kwargs) -> bool:
-        return self.playboard.snake.coords == self.playboard.apple.coords
+        return self.playboard.snake.coords[0] == self.playboard.apple.coords
 
     def _is_x_distance_decreased(self, previous_state: QLearningState) -> bool:
         return abs(self.playboard.apple.x - previous_state.coords[0]) > abs(
-            self.playboard.apple.x - self.playboard.snake.coords[0]
+            self.playboard.apple.x - self.playboard.snake.head.x
         )
 
     def _is_y_distance_decreased(self, previous_state: QLearningState) -> bool:
         return abs(self.playboard.apple.y - previous_state.coords[1]) > abs(
-            self.playboard.apple.y - self.playboard.snake.coords[1]
+            self.playboard.apple.y - self.playboard.snake.head.y
         )
 
     @abstractmethod

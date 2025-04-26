@@ -1,18 +1,21 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from utils.types import ColorType
+from utils.types import TripleInt
 
 
 @dataclass
 class AbstractDrawingObject(ABC):
-    color: ColorType
-
     @abstractmethod
     def draw(self, **kwargs) -> None:
         pass
 
 
 @dataclass
-class AbstractXYObject(AbstractDrawingObject):
+class ColorMixin:
+    color: TripleInt
+
+
+@dataclass
+class XYMixin:
     x: int
     y: int

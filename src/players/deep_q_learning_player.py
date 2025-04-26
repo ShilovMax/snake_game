@@ -47,12 +47,12 @@ class DeepQLearningPlayer(AbstractQLearningPlayer):
         return Action(result)
 
     def _get_max(self, array: list[float], state: LessOrGreaterState) -> int:
-        max_index_1 = array.index(max(array))
+        max_index_1: int = array.index(max(array))
         if sum(state) == 2:
-            array_copy = array.copy()
+            array_copy: list[float] = array.copy()
             array.pop(max_index_1)
-            max_value_2 = max(array)
-            max_index_2 = array_copy.index(max_value_2)
+            max_value_2: float = max(array)
+            max_index_2: int = array_copy.index(max_value_2)
             self.second_best_action_probability_per_state[str(state)] = max_value_2
 
             return random.choice([max_index_1, max_index_2])

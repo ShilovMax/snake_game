@@ -1,4 +1,4 @@
-from .drawing_object import AbstractDrawingObject, AbstractXYObject
+from .drawing_object import AbstractDrawingObject
 from .grid import Grid
 from .apple import Apple
 from .snake import Snake
@@ -7,7 +7,6 @@ from .text import TextObject
 
 __all__ = [
     "AbstractDrawingObject",
-    "AbstractXYObject",
     "TextObject",
     "Grid",
     "Apple",

@@ -1,7 +1,7 @@
 from utils.factories import AbstractFactory
-from utils.types import ColorType
+from utils.types import TripleInt
 from .apple import Apple
-from .snake import Snake
+from .snake import Snake, SnakeItem
 from .grid import Grid
 from .text import TextObject
 import config as cf
@@ -16,7 +16,7 @@ class DrawingObjectFactory(AbstractFactory):
         return kwargs
 
     @classmethod
-    def get_param(cls, param: str) -> int | ColorType:
+    def get_param(cls, param: str) -> int | TripleInt:
         name = f"DEFAULT_{cls.class_to_create.__name__.upper()}_{param}"
         attr = getattr(cf, name)
         if attr is None:
@@ -28,12 +28,21 @@ class AppleFactory(DrawingObjectFactory):
     class_to_create = Apple
 
 
-class SnakeFactory(DrawingObjectFactory):
-    class_to_create = Snake
-
-
 class GridFactory(DrawingObjectFactory):
     class_to_create = Grid
+
+
+class SnakeItemFactory(DrawingObjectFactory):
+    class_to_create = SnakeItem
+
+
+class SnakeFactory(AbstractFactory):
+    class_to_create = Snake
+
+    @classmethod
+    def set_defaults(cls, kwargs: dict) -> dict:
+        kwargs.setdefault("body", [SnakeItemFactory.create()])
+        return kwargs
 
 
 class ScoreFactory(AbstractFactory):

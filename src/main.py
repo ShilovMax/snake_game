@@ -19,6 +19,7 @@ class GameType(Enum):
 pg.init()
 
 # game = GameType.human.value.create()
+# game.play(endless=True)
 game = GameType.deep_q_learning_game.value.create()
 file0 = MODELS_DIR / "model_v2.pth"
 file1 = MODELS_DIR / "model_v2_batch.pth"
@@ -31,10 +32,10 @@ game.learn(
     # mode=LearnMode.batch,
     # wins_per_batch_count=5,
     mode=LearnMode.till_high_probability_of_second_best_action,
-    probability=0.4,
+    probability=0.3,
     # file=file4,
     # sleep=0.05,
 )
-# game.player.epsilon = 0
-# game.player.file = file4
-# game.fake_batch_play(sleep=0.2)
+game.player.epsilon = 0
+# game.player.file = file3
+game.fake_batch_play(sleep=0.2)

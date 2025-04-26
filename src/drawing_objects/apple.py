@@ -1,7 +1,7 @@
 from dataclasses import dataclass
-from .rectangle import Rectangle
+from .rectangle import ResetRectangle
 
 
 @dataclass
-class Apple(Rectangle):
+class Apple(ResetRectangle):
     pass

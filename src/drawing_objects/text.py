@@ -1,12 +1,14 @@
 import pygame as pg
 from dataclasses import dataclass
-from .drawing_object import AbstractDrawingObject
+
+from utils.types import DoubleInt
+from .drawing_object import AbstractDrawingObject, ColorMixin
 
 
 @dataclass
-class TextObject(AbstractDrawingObject):
+class TextObject(AbstractDrawingObject, ColorMixin):
     font_size: int
-    rect_size: tuple[int, int]
+    rect_size: DoubleInt
     _text: str
 
     def __post_init__(self):

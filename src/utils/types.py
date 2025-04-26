@@ -1,7 +1,7 @@
 from enum import Enum
 
-ColorType = tuple[int, int, int]
-CoordsType = tuple[int, int]
+TripleInt = tuple[int, int, int]
+DoubleInt = tuple[int, int]
 
 
 class Action(Enum):

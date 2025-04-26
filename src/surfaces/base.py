@@ -1,13 +1,13 @@
 from dataclasses import dataclass
 import pygame as pg
 from drawing_objects import AbstractDrawingObject
-from utils.types import ColorType
+from utils.types import DoubleInt, TripleInt
 
 
 @dataclass
 class BaseSurface:
-    size: tuple[int, int]
-    background_color: ColorType
+    size: DoubleInt
+    background_color: TripleInt
 
     def __post_init__(self):
         self.surface: pg.Surface = pg.Surface(size=self.size)
@@ -24,7 +24,7 @@ class BaseSurface:
         if isinstance(attr, AbstractDrawingObject):
             self.drawing_objects.append(attr)
 
-    def draw(self, surface: pg.Surface, coords: tuple[int, int], **kwargs) -> None:
+    def draw(self, surface: pg.Surface, coords: DoubleInt, **kwargs) -> None:
         self.surface.fill(color=self.background_color)
         self._draw_objects(**kwargs)
         surface.blit(self.surface, coords)

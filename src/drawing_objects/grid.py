@@ -1,9 +1,11 @@
-from .drawing_object import AbstractXYObject
+from dataclasses import dataclass
+from .drawing_object import AbstractDrawingObject, XYMixin, ColorMixin
 import pygame as pg
 from config import CELL_SIZE
 
 
-class Grid(AbstractXYObject):
+@dataclass
+class Grid(AbstractDrawingObject, ColorMixin, XYMixin):
     def draw(self, surface: pg.Surface) -> None:
         self.draw_vertical_lines(surface=surface)
         self.draw_horizontal_lines(surface=surface)

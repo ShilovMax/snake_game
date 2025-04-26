@@ -11,10 +11,10 @@ class DeepQLearningGame(BaseQLearningGame):
 
     def _get_state(self) -> LessOrGreaterState:
         return LessOrGreaterState(
-            is_head_x_less_than_apple_x=self.snake_coords[0] < self.apple_coords[0],
-            is_head_x_greater_than_apple_x=self.snake_coords[0] > self.apple_coords[0],
-            is_head_y_less_than_apple_y=self.snake_coords[1] < self.apple_coords[1],
-            is_head_y_greater_than_apple_y=self.snake_coords[1] > self.apple_coords[1],
+            is_head_x_less_than_apple_x=self.snake_head.x < self.apple.x,
+            is_head_x_greater_than_apple_x=self.snake_head.x > self.apple.x,
+            is_head_y_less_than_apple_y=self.snake_head.y < self.apple.y,
+            is_head_y_greater_than_apple_y=self.snake_head.y > self.apple.y,
         )
 
     def _save(self, file: str) -> None:
@@ -63,5 +63,5 @@ class DeepQLearningGame(BaseQLearningGame):
         elif state.is_head_y_greater_than_apple_y:
             snake_y = self.playboard.height
 
-        self.playboard.snake.coords = (snake_x, snake_y)
+        self.playboard.snake.head.coords = (snake_x, snake_y)
         self.playboard.apple.coords = (apple_x, apple_y)

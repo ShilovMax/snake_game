@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 import random
 from drawing_objects import Grid, Apple, Snake
-from utils.types import CoordsType, Action
+from utils.types import DoubleInt, Action
 from ..base import BaseSurface
 
 
@@ -15,11 +15,9 @@ class BasePlayboard(BaseSurface):
 
     def __post_init__(self) -> None:
         super().__post_init__()
-        self._all_coords: set[CoordsType] = {
+        self._all_coords: set[DoubleInt] = {
             (x, y) for x in range(self.width + 1) for y in range(self.height + 1)
         }
-        self.apple_coords = self.apple.coords
-        self.snake_coords = self.snake.coords
 
     def reset(self, is_random: bool) -> None:
         self.reset_apple(is_random=is_random)
@@ -27,31 +25,32 @@ class BasePlayboard(BaseSurface):
 
     def reset_apple(self, is_random: bool) -> None:
         if is_random:
-            possible_apple_coords: set[CoordsType] = self._all_coords - {
+            possible_apple_coords: set[DoubleInt] = self._all_coords - set(
                 self.snake.coords
-            }
+            )
+
             self.apple.coords = random.choice(list(possible_apple_coords))
         else:
-            self.apple.coords = self.apple_coords
+            self.apple.reset()
 
     def reset_snake(self) -> None:
-        self.snake.coords = self.snake_coords
+        self.snake.reset()
 
     def do_updates(self, action: Action) -> None:
         if self._left_condition(action=action):
-            self.snake.move_left()
+            self.snake.move(action=action)
         elif self._right_condition(action=action):
-            self.snake.move_right()
+            self.snake.move(action=action)
         elif self._up_condition(action=action):
-            self.snake.move_up()
+            self.snake.move(action=action)
         elif self._down_condition(action=action):
-            self.snake.move_down()
+            self.snake.move(action=action)
 
     def check_game_over(self) -> bool:
         return False
 
     def check_win(self) -> bool:
-        return self.snake.coords == self.apple.coords
+        return self.snake.head.coords == self.apple.coords
 
     def _left_condition(self, action: Action) -> bool:
         if action == Action.left:
