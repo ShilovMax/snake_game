@@ -19,8 +19,14 @@ class BasePlayboard(BaseSurface):
             (x, y) for x in range(self.width + 1) for y in range(self.height + 1)
         }
 
-    def reset(self, is_random: bool) -> None:
-        self.reset_apple(is_random=is_random)
+    def reset_on_win(self):
+        for item in self.snake.body:
+            item.start_coords = item.coords
+        self.reset_apple(is_random=True)
+        self.apple.start_coords = self.apple.coords
+
+    def reset(self) -> None:
+        self.reset_apple(is_random=False)
         self.reset_snake()
 
     def reset_apple(self, is_random: bool) -> None:
@@ -28,8 +34,10 @@ class BasePlayboard(BaseSurface):
             possible_apple_coords: set[DoubleInt] = self._all_coords - set(
                 self.snake.coords
             )
-
-            self.apple.coords = random.choice(list(possible_apple_coords))
+            if possible_apple_coords:
+                self.apple.coords = random.choice(list(possible_apple_coords))
+            else:
+                raise
         else:
             self.apple.reset()
 
@@ -37,41 +45,23 @@ class BasePlayboard(BaseSurface):
         self.snake.reset()
 
     def do_updates(self, action: Action) -> None:
-        if self._left_condition(action=action):
+        if action != Action.stay:
+            print("before", self.snake)
+            print(self.snake.head.coords)
+            print(self.snake.body_visible_coords)
             self.snake.move(action=action)
-        elif self._right_condition(action=action):
-            self.snake.move(action=action)
-        elif self._up_condition(action=action):
-            self.snake.move(action=action)
-        elif self._down_condition(action=action):
-            self.snake.move(action=action)
+            print("after", self.snake)
+            print(self.snake.head.coords)
+            print(self.snake.body_visible_coords)
+            print()
 
     def check_game_over(self) -> bool:
-        return False
+        return any([
+            self.snake.head.x < 0,
+            self.snake.head.x > self.width,
+            self.snake.head.y < 0,
+            self.snake.head.y > self.height,
+        ])
 
     def check_win(self) -> bool:
         return self.snake.head.coords == self.apple.coords
-
-    def _left_condition(self, action: Action) -> bool:
-        if action == Action.left:
-            if self.snake.x > 0:
-                return True
-        return False
-
-    def _right_condition(self, action: Action) -> bool:
-        if action == Action.right:
-            if self.snake.x < self.width:
-                return True
-        return False
-
-    def _up_condition(self, action: Action) -> bool:
-        if action == Action.up:
-            if self.snake.y > 0:
-                return True
-        return False
-
-    def _down_condition(self, action: Action) -> bool:
-        if action == Action.down:
-            if self.snake.y < self.height:
-                return True
-        return False

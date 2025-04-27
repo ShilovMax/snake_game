@@ -47,7 +47,7 @@ class QLearningPlayer(AbstractQLearningPlayer):
         r = self._get_max(array=array)
         return r
 
-    def _get_q(self, position: TripleInt) -> np.ndarray:
+    def _get_q(self, position: tuple) -> np.ndarray:
         return self.q_table[position]
 
     def _set_q(self, position: TripleInt, value: float) -> None:

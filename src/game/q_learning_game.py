@@ -18,6 +18,6 @@ class QLearningGame(BaseQLearningGame):
 
     def _get_state(self) -> QLearningState:
         return LinearQLearningState(
-            snake_coords=self.snake_head_coords,
-            apple_coords=self.apple_coords,
+            snake_coords=self.snake_head.coords,
+            apple_coords=self.apple.coords,
         ).get_linear_coords(size=self.playboard.width)

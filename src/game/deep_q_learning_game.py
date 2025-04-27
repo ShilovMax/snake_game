@@ -1,24 +1,11 @@
-from .base_q_learning_game import BaseQLearningGame
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from utils.state import LessOrGreaterState
-from players import DeepQLearningPlayer
-import torch
+from .base_deep_q_learning_game import BaseDeepQLearningGame
 
 
 @dataclass
-class DeepQLearningGame(BaseQLearningGame):
-    player: DeepQLearningPlayer
-
-    def _get_state(self) -> LessOrGreaterState:
-        return LessOrGreaterState(
-            is_head_x_less_than_apple_x=self.snake_head.x < self.apple.x,
-            is_head_x_greater_than_apple_x=self.snake_head.x > self.apple.x,
-            is_head_y_less_than_apple_y=self.snake_head.y < self.apple.y,
-            is_head_y_greater_than_apple_y=self.snake_head.y > self.apple.y,
-        )
-
-    def _save(self, file: str) -> None:
-        torch.save(self.player.model.state_dict(), file)
+class DeepQLearningGame(BaseDeepQLearningGame):
+    state: type[LessOrGreaterState] = field(init=False, default=LessOrGreaterState)
 
     def _learn_till_high_probability_of_second_best_action(
         self,
@@ -32,36 +19,5 @@ class DeepQLearningGame(BaseQLearningGame):
             for x in self.player.second_best_action_probability_per_state.values()
         ):
             for state in states:
-                self._set_playboard_by_state(state=state)
-                self.play(endless=False, sleep=sleep)
-
-    def _learn_batch(self, wins_per_batch_count: int, sleep: float = 0) -> None:
-        states: list[LessOrGreaterState] = LessOrGreaterState.get_all_possible_states()
-
-        for _ in range(wins_per_batch_count):
-            for state in states:
-                self._set_playboard_by_state(state=state)
-                self.play(endless=False, sleep=sleep)
-
-    def fake_batch_play(self, sleep: float = 0) -> None:
-        states: list[LessOrGreaterState] = LessOrGreaterState.get_all_possible_states()
-        for state in states:
-            self._set_playboard_by_state(state=state)
-            self.play(endless=False, sleep=sleep)
-
-    def _set_playboard_by_state(self, state: LessOrGreaterState) -> None:
-        snake_x, apple_x = 0, 0
-        snake_y, apple_y = 0, 0
-
-        if state.is_head_x_less_than_apple_x:
-            apple_x = self.playboard.width
-        elif state.is_head_x_greater_than_apple_x:
-            snake_x = self.playboard.width
-
-        if state.is_head_y_less_than_apple_y:
-            apple_y = self.playboard.height
-        elif state.is_head_y_greater_than_apple_y:
-            snake_y = self.playboard.height
-
-        self.playboard.snake.head.coords = (snake_x, snake_y)
-        self.playboard.apple.coords = (apple_x, apple_y)
+                self._set_playboard_from_state(state=state)
+                self.play(endless_win=False, endless_lose=True, sleep=sleep)

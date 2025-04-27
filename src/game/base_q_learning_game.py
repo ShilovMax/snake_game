@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from game import Game
 from players import AbstractQLearningPlayer
 from utils.state import BaseState, QLearningState
-from utils.types import DoubleInt, LearnMode
+from utils.types import LearnMode
 
 
 @dataclass
@@ -14,6 +14,8 @@ class BaseQLearningGame[S: BaseState, P: AbstractQLearningPlayer](Game):
         super().__post_init__()
         self.is_learning: bool = False
         self._rewards: dict = {
+            self._is_out_of_playboard: -10,
+            self._is_damage_itself: -10,
             self._is_eat_apple: 10,
             self._is_x_distance_decreased: 1,
             self._is_y_distance_decreased: 1,
@@ -23,22 +25,6 @@ class BaseQLearningGame[S: BaseState, P: AbstractQLearningPlayer](Game):
             LearnMode.batch: self._learn_batch,
             LearnMode.till_high_probability_of_second_best_action: self._learn_till_high_probability_of_second_best_action,
         }
-
-    @property
-    def snake_head(self):
-        return self.playboard.snake.head
-
-    @property
-    def apple(self):
-        return self.playboard.apple
-
-    @property
-    def snake_head_coords(self) -> DoubleInt:
-        return self.playboard.snake.head.coords
-
-    @property
-    def apple_coords(self) -> DoubleInt:
-        return self.playboard.apple.coords
 
     def learn(self, mode: LearnMode, file: str | None = None, **kwargs) -> None:
         self.is_learning = True
@@ -50,7 +36,7 @@ class BaseQLearningGame[S: BaseState, P: AbstractQLearningPlayer](Game):
 
     def _learn_till_wins_count(self, wins_count: int, sleep: float = 0) -> None:
         while self.score < wins_count:
-            self.play(endless=False, sleep=sleep)
+            self.play(endless_win=False, endless_lose=True, sleep=sleep)
 
     def _learn_batch(self, **kwargs) -> None:
         pass
@@ -65,7 +51,6 @@ class BaseQLearningGame[S: BaseState, P: AbstractQLearningPlayer](Game):
         super()._do_updates()
         if not self.is_learning:
             return
-
         self.player.learn(
             previous_state=previous_state,
             action=self.action,
@@ -90,6 +75,20 @@ class BaseQLearningGame[S: BaseState, P: AbstractQLearningPlayer](Game):
     def _is_y_distance_decreased(self, previous_state: QLearningState) -> bool:
         return abs(self.playboard.apple.y - previous_state.coords[1]) > abs(
             self.playboard.apple.y - self.playboard.snake.head.y
+        )
+
+    def _is_out_of_playboard(self, **kwargs) -> bool:
+        return any([
+            self.snake.head.x < 0,
+            self.snake.head.x > self.playboard.width,
+            self.snake.head.y < 0,
+            self.snake.head.y > self.playboard.height,
+        ])
+
+    def _is_damage_itself(self, **kwargs) -> bool:
+        return (
+            self.playboard.previous_snake_coords == self.snake.coords[::-1]
+            or self.snake.head.coords in self.snake.body_visible_coords
         )
 
     @abstractmethod

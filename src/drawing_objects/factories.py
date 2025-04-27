@@ -35,6 +35,12 @@ class GridFactory(DrawingObjectFactory):
 class SnakeItemFactory(DrawingObjectFactory):
     class_to_create = SnakeItem
 
+    @classmethod
+    def set_defaults(cls, kwargs: dict) -> dict:
+        kwargs = super(SnakeItemFactory, cls).set_defaults(kwargs=kwargs)
+        kwargs.setdefault("is_visible", True)
+        return kwargs
+
 
 class SnakeFactory(AbstractFactory):
     class_to_create = Snake

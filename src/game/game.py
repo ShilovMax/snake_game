@@ -15,29 +15,65 @@ class Game[BP: BasePlayboard](BaseGame):
         self.action: Action = Action.stay
         self.score: int = 0
 
-    def play(self, endless: bool, sleep: float = 0) -> None:
+    @property
+    def snake(self):
+        return self.playboard.snake
+
+    @property
+    def snake_head(self):
+        return self.playboard.snake.head
+
+    @property
+    def apple(self):
+        return self.playboard.apple
+
+    def play(
+        self,
+        endless_win: bool,
+        endless_lose: bool,
+        sleep: float = 0,
+    ) -> None:
+        self.endless_win = endless_win
+        self.endless_lose = endless_lose
+        self.sleep = sleep
         super().play(sleep=sleep)
         if self.is_win:
-            self._on_win(endless=endless, sleep=sleep)
+            self._on_win()
         elif self.is_game_over:
             self._on_game_over()
 
-    def _on_win(self, endless: bool, sleep: float) -> None:
+    def _on_win(self) -> None:
         self._reset()
         self.is_win = False
         self._update_score()
-        if endless:
-            self.play(endless=endless, sleep=sleep)
+        if self.endless_win:
+            self.play(
+                endless_win=self.endless_win,
+                endless_lose=self.endless_lose,
+                sleep=self.sleep,
+            )
 
     def _reset(self) -> None:
-        self.playboard.reset_apple(is_random=True)
+        try:
+            self.playboard.reset_on_win()
+        except Exception:
+            print("EXCEPTION")
+            self.is_game_over = True
 
     def _update_score(self):
         self.score += 1
         self.score_surface.text = self.score_surface.text.split()[0] + f" {self.score}"
 
     def _on_game_over(self) -> None:
-        pass
+        print("on game over")
+        self.playboard.reset()
+        self.is_game_over = False
+        if self.endless_lose:
+            self.play(
+                endless_win=self.endless_win,
+                endless_lose=self.endless_lose,
+                sleep=self.sleep,
+            )
 
     def _draw_objects(self) -> None:
         self.score_surface.draw(

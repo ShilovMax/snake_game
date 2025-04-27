@@ -1,4 +1,4 @@
-from .playboards import BasePlayboard
+from .playboards import BasePlayboard, LongSnakePlayboard
 from .metrics import ScoreSurface
 from utils.factories import AbstractFactory
 import config as cf
@@ -23,6 +23,10 @@ class BasePlayboardFactory(AbstractFactory):
         kwargs.setdefault("snake", SnakeFactory.create())
         kwargs.setdefault("grid", GridFactory.create())
         return kwargs
+
+
+class LongSnakePlayboardFactory(BasePlayboardFactory):
+    class_to_create = LongSnakePlayboard
 
 
 class ScoreSurfaceFactory(AbstractFactory):

@@ -20,6 +20,17 @@ class Rectangle(AbstractDrawingObject, ColorMixin, XYMixin):
             ),
         )
 
+
+@dataclass
+class ResetRectangle(Rectangle):
+    # start_coords: DoubleInt = field(default=(0, 0), init=False)
+
+    def __post_init__(self) -> None:
+        self.start_coords: DoubleInt = (self.x, self.y)
+
+    def reset(self) -> None:
+        self.x, self.y = self.start_coords
+
     @property
     def coords(self) -> DoubleInt:
         return self.x, self.y
@@ -27,12 +38,4 @@ class Rectangle(AbstractDrawingObject, ColorMixin, XYMixin):
     @coords.setter
     def coords(self, value: DoubleInt) -> None:
         self.x, self.y = value
-
-
-@dataclass
-class ResetRectangle(Rectangle):
-    def __post_init__(self) -> None:
-        self.start_coords: DoubleInt = (self.x, self.y)
-
-    def reset(self) -> None:
-        self.x, self.y = self.start_coords
+        self.start_coords = value

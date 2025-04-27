@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from utils.state import LessOrGreaterState
+from utils.state import LessOrGreaterState, PlusShapedVisionLessOrGreateStateState
 
 from .abstract_q_learning_player import AbstractQLearningPlayer
 import torch
@@ -8,7 +8,6 @@ from torch.optim import Optimizer
 from torch.nn.modules.loss import _Loss
 from utils.types import Action
 from neural_networks import BaseNeuralNetwork
-import random
 
 
 @dataclass
@@ -40,22 +39,25 @@ class DeepQLearningPlayer(AbstractQLearningPlayer):
             self.epsilon = 0
 
     def _get_best_action(self, state: LessOrGreaterState) -> Action:
+        print("state", state)
         q_values = self.model(torch.tensor([*state], dtype=torch.float32))
         vals: list[float] = [round(float(x), 4) for x in q_values]
+        print("q values", vals)
         result: int = self._get_max(state=state, array=vals)
+        print("result", result, Action(result))
 
         return Action(result)
 
     def _get_max(self, array: list[float], state: LessOrGreaterState) -> int:
         max_index_1: int = array.index(max(array))
-        if sum(state) == 2:
-            array_copy: list[float] = array.copy()
-            array.pop(max_index_1)
-            max_value_2: float = max(array)
-            max_index_2: int = array_copy.index(max_value_2)
-            self.second_best_action_probability_per_state[str(state)] = max_value_2
+        # if sum(state) == 2:
+        #     array_copy: list[float] = array.copy()
+        #     array.pop(max_index_1)
+        #     max_value_2: float = max(array)
+        #     max_index_2: int = array_copy.index(max_value_2)
+        #     self.second_best_action_probability_per_state[str(state)] = max_value_2
 
-            return random.choice([max_index_1, max_index_2])
+        #     return random.choice([max_index_1, max_index_2])
 
         return max_index_1
 
@@ -66,6 +68,13 @@ class DeepQLearningPlayer(AbstractQLearningPlayer):
         reward: int,
         current_state: LessOrGreaterState,
     ):
+        print("reward", reward)
+        if (
+            previous_state
+            not in PlusShapedVisionLessOrGreateStateState.get_all_possible_states()
+        ):
+            print("NOT IN STATE")
+            return
         previous_q_values = self.model(
             torch.tensor([*previous_state], dtype=torch.float32)
         )

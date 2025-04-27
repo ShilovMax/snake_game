@@ -1,5 +1,5 @@
 from pathlib import Path
-from torch.nn import Linear, Softmax, MSELoss
+from torch.nn import Linear, ReLU, Softmax, MSELoss
 from torch.optim import Adam
 
 # SCORE
@@ -65,6 +65,25 @@ NN_LAYERS = [
     {
         "name": "layer0",
         "func": Linear(4, 4),
+    },
+    {
+        "name": "softmax0",
+        "func": Softmax(),
+    },
+]
+
+NN_LAYERS = [
+    {
+        "name": "layer0",
+        "func": Linear(8, 8),
+    },
+    {
+        "name": "relu0",
+        "func": ReLU(),
+    },
+    {
+        "name": "layer1",
+        "func": Linear(8, 4),
     },
     {
         "name": "softmax0",
